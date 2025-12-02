@@ -1,4 +1,4 @@
-# Heart Disease Prediction
+#Predicción de enfermedades cardíacas
 
 Este proyecto utiliza Machine learning para predecir la probabilidad de enfermedad cardíaca a partir de datos médicos del usuario. Se presenta una aplicación web interactiva desarrollada en Streamlit, que facilita tanto la entrada de datos como la visualización de resultados. El modelo ha sido entrenado y normalizado previamente, y permite su uso tanto en local como en la nube.
 
