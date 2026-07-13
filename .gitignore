@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.streamlit/
+venv/
+.venv/
+env/
+.env
+.DS_Store
+.devcontainer/
+.agents/
+.gemini/
+scratch/
+test_*.py
+inspect_*.py
+verify_*.py
