@@ -146,143 +146,165 @@ st.write(
 tab_datos, tab_instrucciones = st.tabs(["📝 Formulario de Entrada", "📖 Guía de Variables Médicas"])
 
 with tab_datos:
-    # Formulario dividido en 3 columnas lógicas
+    # Formulario simplificado - Campos básicos visibles
+    st.subheader("📋 Información Básica (accesible para todos)")
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.subheader("👤 Datos Básicos")
+        age = st.slider(
+            "Edad (Años)", 
+            min_value=18, 
+            max_value=100, 
+            value=45, 
+            step=1, 
+            help="Tu edad actual en años."
+        )
         
-        age = st.slider("Edad (Años)", min_value=18, max_value=100, value=45, step=1, help="Edad biológica del paciente.")
-        
-        sex_lbl = st.selectbox("Sexo", ["Masculino", "Femenino"], help="Sexo de nacimiento del paciente.")
+        sex_lbl = st.selectbox(
+            "Sexo", 
+            ["Masculino", "Femenino"], 
+            help="Sexo de nacimiento."
+        )
         sex = 1 if sex_lbl == "Masculino" else 0
         
         cp_lbl = st.selectbox(
-            "Tipo de Dolor de Pecho",
+            "¿Cómo es tu dolor de pecho? (Tipo de Dolor Torácico)",
             [
-                "Angina Típica",
-                "Angina Atípica",
-                "Dolor No Anginoso",
-                "Asintomático"
+                "No tengo dolor",
+                "Dolor típico (opresivo, por esfuerzo)",
+                "Dolor atípico (agudo, no relacionado al esfuerzo)",
+                "Dolor punzante/quemazón (probablemente no cardíaco)"
             ],
-            help="Dolor torácico descrito clínicamente."
+            help="Describe cómo es el dolor que sientes en el pecho, si lo tienes. Si no tienes dolor, selecciona 'No tengo dolor'."
         )
         # Mapear a códigos del dataset
         cp_map = {
-            "Angina Típica": 0,
-            "Angina Atípica": 1,
-            "Dolor No Anginoso": 2,
-            "Asintomático": 3
+            "No tengo dolor": 3,  # Asintomático
+            "Dolor típico (opresivo, por esfuerzo)": 0,  # Angina Típica
+            "Dolor atípico (agudo, no relacionado al esfuerzo)": 1,  # Angina Atípica
+            "Dolor punzante/quemazón (probablemente no cardíaco)": 2  # Dolor No Anginoso
         }
         cp = cp_map[cp_lbl]
 
-        exang_lbl = st.selectbox("Angina inducida por Ejercicio", ["No", "Sí"], help="¿El dolor en el pecho aparece al realizar esfuerzo físico?")
-        exang = 1 if exang_lbl == "Sí" else 0
-
     with col2:
-        st.subheader("🩺 Parámetros Fisiológicos")
-        
         trestbps = st.slider(
-            "Presión Arterial en Reposo (mmHg)", 
+            "Presión Arterial (mmHg)", 
             min_value=90, 
             max_value=200, 
             value=120, 
             step=1,
-            help="Presión arterial tomada al ingresar en reposo."
+            help="Es la presión que te miden en el brazo. Si no la conoces, un valor normal está entre 90-120 mmHg."
         )
         
         chol = st.slider(
-            "Colesterol Sérico (mg/dl)", 
+            "Colesterol Total (mg/dl)", 
             min_value=100, 
             max_value=600, 
             value=200, 
             step=1,
-            help="Colesterol total en sangre."
+            help="Resultado de un análisis de sangre. Si no lo sabes, un valor saludable es menor a 200 mg/dl."
         )
         
-        fbs_lbl = st.selectbox("Azúcar en Sangre en Ayunas (> 120 mg/dl)", ["Falso (Normal)", "Verdadero (Elevado)"], help="Glucosa tras ayuno.")
-        fbs = 1 if fbs_lbl == "Verdadero (Elevado)" else 0
+        fbs_lbl = st.selectbox(
+            "¿Tu azúcar en ayunas suele estar alta? (prediabetes o diabetes)", 
+            ["No (normal)", "Sí (mayor a 120 mg/dl)"], 
+            help="Se detecta con un análisis de sangre en ayunas. Si no lo sabes, selecciona 'No'."
+        )
+        fbs = 1 if fbs_lbl == "Sí (mayor a 120 mg/dl)" else 0
 
     with col3:
-        st.subheader("⚡ Electrocardiograma y Esfuerzo")
+        exang_lbl = st.selectbox(
+            "¿Te duele el pecho al hacer esfuerzo físico?", 
+            ["No", "Sí"], 
+            help="Si sientes dolor en el pecho cuando caminas rápido, subes escaleras o haces ejercicio, selecciona 'Sí'."
+        )
+        exang = 1 if exang_lbl == "Sí" else 0
+
+    # Sección expandible para campos clínicos avanzados
+    with st.expander("🔬 Tengo resultados de estudios médicos (opcional)"):
+        st.info("💡 Si no tienes estos estudios médicos, no abras esta sección. El modelo usará valores normales por defecto.")
         
-        restecg_lbl = st.selectbox(
-            "Resultados ECG en Reposo",
-            [
-                "Normal",
-                "Anormalidad de onda ST-T",
-                "Hipertrofia Ventricular Izquierda"
-            ],
-            help="Electrocardiograma de reposo."
-        )
-        restecg_map = {
-            "Normal": 0,
-            "Anormalidad de onda ST-T": 1,
-            "Hipertrofia Ventricular Izquierda": 2
-        }
-        restecg = restecg_map[restecg_lbl]
+        col4, col5, col6 = st.columns(3)
 
-        thalach = st.slider(
-            "Frecuencia Cardíaca Máxima (bpm)", 
-            min_value=60, 
-            max_value=220, 
-            value=150, 
-            step=1,
-            help="Frecuencia cardíaca más alta lograda durante la prueba de esfuerzo."
-        )
-        
-        oldpeak = st.slider(
-            "Depresión del ST por Ejercicio (mm)", 
-            min_value=0.0, 
-            max_value=6.2, 
-            value=0.0, 
-            step=0.1,
-            help="Depresión del ST inducida por esfuerzo relativo a reposo."
-        )
+        with col4:
+            restecg_lbl = st.selectbox(
+                "Resultado de tu electrocardiograma (si no lo sabes, deja 'Normal')",
+                [
+                    "Normal",
+                    "Anormalidad de onda ST-T",
+                    "Hipertrofia Ventricular Izquierda"
+                ],
+                help="Resultado de un estudio ECG en reposo. Si no lo tienes, deja 'Normal'."
+            )
+            restecg_map = {
+                "Normal": 0,
+                "Anormalidad de onda ST-T": 1,
+                "Hipertrofia Ventricular Izquierda": 2
+            }
+            restecg = restecg_map[restecg_lbl]
 
-    # Variables clínicas avanzadas
-    st.markdown("---")
-    st.subheader("🔬 Detalles Clínicos Avanzados")
-    col4, col5, col6 = st.columns(3)
+            thalach = st.slider(
+                "Frecuencia Cardíaca Máxima (bpm)", 
+                min_value=60, 
+                max_value=220, 
+                value=150, 
+                step=1,
+                help="Pulsaciones máximas alcanzadas en una prueba de esfuerzo. Si no lo sabes, deja el valor por defecto (150)."
+            )
+            
+            oldpeak = st.slider(
+                "Depresión del ST por Ejercicio (mm)", 
+                min_value=0.0, 
+                max_value=6.2, 
+                value=0.0, 
+                step=0.1,
+                help="Medida de un ECG durante esfuerzo. Si no lo tienes, deja 0.0."
+            )
 
-    with col4:
-        slope_lbl = st.selectbox(
-            "Pendiente del Segmento ST",
-            [
-                "Pendiente Ascendente",
-                "Plana",
-                "Pendiente Descendente"
-            ],
-            help="Pendiente en ejercicio máximo."
-        )
-        slope_map = {
-            "Pendiente Ascendente": 0,
-            "Plana": 1,
-            "Pendiente Descendente": 2
-        }
-        slope = slope_map[slope_lbl]
+        with col5:
+            slope_lbl = st.selectbox(
+                "Pendiente del Segmento ST (si no lo sabes, deja 'Plana')",
+                [
+                    "Pendiente Ascendente",
+                    "Plana",
+                    "Pendiente Descendente"
+                ],
+                help="Patrón del ECG durante ejercicio máximo. Si no lo tienes, deja 'Plana'."
+            )
+            slope_map = {
+                "Pendiente Ascendente": 0,
+                "Plana": 1,
+                "Pendiente Descendente": 2
+            }
+            slope = slope_map[slope_lbl]
 
-    with col5:
-        ca = st.slider("Vasos Principales Coloreados (Fluoroscopia)", min_value=0, max_value=4, value=0, step=1, help="Número de arterias principales obstruidas u observadas.")
+            ca = st.slider(
+                "Arterias con obstrucción detectada (si no tienes este dato, deja 0)", 
+                min_value=0, 
+                max_value=4, 
+                value=0, 
+                step=1, 
+                help="Número de arterias principales obstruidas según un estudio de imagen (fluoroscopia). Si no lo tienes, deja 0."
+            )
 
-    with col6:
-        thal_lbl = st.selectbox(
-            "Talasemia / Perfusión Sanguínea",
-            [
-                "Normal",
-                "Defecto Fijo",
-                "Defecto Reversible",
-                "No especificado / Nulo"
-            ],
-            help="Evaluación del flujo sanguíneo cardíaco."
-        )
-        thal_map = {
-            "No especificado / Nulo": 0,
-            "Defecto Fijo": 1,
-            "Normal": 2,
-            "Defecto Reversible": 3
-        }
-        thal = thal_map[thal_lbl]
+        with col6:
+            thal_lbl = st.selectbox(
+                "Tipo de anemia hereditaria (si no lo sabes, deja 'Normal')",
+                [
+                    "Normal",
+                    "Defecto Fijo",
+                    "Defecto Reversible",
+                    "No especificado / Nulo"
+                ],
+                help="Talasemia detectada en estudios médicos. Si no lo sabes, deja 'Normal'."
+            )
+            thal_map = {
+                "No especificado / Nulo": 0,
+                "Defecto Fijo": 1,
+                "Normal": 2,
+                "Defecto Reversible": 3
+            }
+            thal = thal_map[thal_lbl]
 
     # Recopilar datos en un diccionario
     user_inputs = {
