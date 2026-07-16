@@ -108,7 +108,7 @@ st.sidebar.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
 logo_path = os.path.join(BASE_DIR, 'assets', 'logo.png')
 if os.path.exists(logo_path):
     logo_image = Image.open(logo_path)
-    st.sidebar.image(logo_image, use_container_width=True)
+    st.sidebar.image(logo_image, width='stretch')
 else:
     st.sidebar.title("❤️ CardioVital")
 
@@ -360,7 +360,7 @@ with tab_datos:
         with res_col2:
             st.subheader("Probabilidad por Similitud de Perfiles")
             gauge_chart = create_risk_gauge(results['neighbor_risk_index'])
-            st.plotly_chart(gauge_chart, use_container_width=True)
+            st.plotly_chart(gauge_chart, width='stretch')
             st.caption(
                 "El medidor ilustra el riesgo estimado basándose en la coincidencia con los 5 vecinos médicos más similares "
                 "en la base de entrenamiento del modelo (algoritmo KNN)."
@@ -385,7 +385,7 @@ with tab_datos:
         with ind_col2:
             st.subheader("Comparativa de Factores Clave vs Referencia")
             comp_chart = create_comparison_chart(user_inputs)
-            st.plotly_chart(comp_chart, use_container_width=True)
+            st.plotly_chart(comp_chart, width='stretch')
             st.caption("Los indicadores ideales de salud son: Presión arterial < 120, Colesterol < 200 y Frecuencia Cardíaca Máxima (220 - edad).")
 
 with tab_instrucciones:
