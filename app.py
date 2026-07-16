@@ -108,7 +108,7 @@ st.sidebar.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
 logo_path = os.path.join(BASE_DIR, 'assets', 'logo.png')
 if os.path.exists(logo_path):
     logo_image = Image.open(logo_path)
-    st.sidebar.image(logo_image, use_container_width=True)
+    st.sidebar.image(logo_image, use_column_width=True)
 else:
     st.sidebar.title("❤️ CardioVital")
 
